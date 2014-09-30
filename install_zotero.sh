@@ -243,16 +243,19 @@ echo "#############"
 echo "download source code for ZSS"
 git clone git://github.com/sualk/zss.git /srv/zotero/zss
 
+echo "adjust directory rights"
+chown www-data:www-data /srv/zotero/storage
+
 echo  "adjust path for ZSS.pm"
-sed -i "s/path\/to/srv\/zss/" /srv/zotero/zss/zss.psgi
+sed -i "s,path/to,srv/zotero/zss," /srv/zotero/zss/zss.psgi
 
 echo "adjust properties in ZSS.pm"
 sed -i "s/yoursecretkey/${AWS_SECRET_KEY}/" /srv/zotero/zss/ZSS.pm
-sed -i "s/path\/to/srv\/zss/"  /srv/zotero/zss/ZSS.pm
+sed -i "s,path/to,srv/zotero/storage,"  /srv/zotero/zss/ZSS.pm
 
 echo "configure uwsgi"
 echo "uwsgi:
-  plugin: psgi
-  psgi: /srv/zotero/zss/zss.psgi" > /etc/uwsgi/apps-available/zss.yaml
+\ \ plugin: psgi
+\ \ psgi: /srv/zotero/zss/zss.psgi" > /etc/uwsgi/apps-available/zss.yaml
 ln -s /etc/uwsgi/apps-available/zss.yaml /etc/uwsgi/apps-enabled/zss.yaml
 /etc/init.d/uwsgi restart
