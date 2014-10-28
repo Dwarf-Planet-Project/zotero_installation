@@ -29,6 +29,9 @@ mkdir -p /srv/zotero/log/download
 mkdir -p /srv/zotero/log/upload
 mkdir -p /srv/zotero/log/error
 
+# save current directory
+cur_dir=$(pwd)
+
 echo "download source code of dataserver"
 git clone git://github.com/zotero/dataserver.git /srv/zotero/dataserver
 
@@ -147,7 +150,7 @@ echo "Load in schema on id server"
 cat ids.sql | $DB zotero_ids
 
 echo "Load in www schema"
-$DB zotero_www < www.sql
+$DB zotero_www < $(cur_dir)www.sql
 
 echo "#################################"
 echo "Configuration database connection"
