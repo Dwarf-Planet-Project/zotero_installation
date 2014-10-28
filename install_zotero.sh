@@ -156,14 +156,19 @@ echo "#################################"
 cp /srv/zotero/dataserver/include/config/dbconnect.inc.php-sample /srv/zotero/dataserver/include/config/dbconnect.inc.php
 echo -n "hostname for database: "
 read hostname
-sed -i "s/localhost/${hostname}/g" /srv/zotero/dataserver/include/config/dbconnect.inc.php
+sed -i "s/host\ =\ ''/host\ =\ '${hostname}'/g" /srv/zotero/dataserver/include/config/dbconnect.inc.php
+sed -i "s/host\ =\ false/host\ =\ '${hostname}'/g" /srv/zotero/dataserver/include/config/dbconnect.inc.php
+sed -i "s/port\ =\ ''/port\ =\ 3306/g" /srv/zotero/dataserver/include/config/dbconnect.inc.php
+sed -i "s/port\ =\ false/port\ =\ 3306/g" /srv/zotero/dataserver/include/config/dbconnect.inc.php
 sed -i "s/user\ =\ ''/user\ =\ 'zotero'/g" /srv/zotero/dataserver/include/config/dbconnect.inc.php
+sed -i "s/user\ =\ false/user\ =\ 'zotero'/g" /srv/zotero/dataserver/include/config/dbconnect.inc.php
 sed -i "s/pass\ =\ ''/pass\ =\ '${zotero_password}'/g" /srv/zotero/dataserver/include/config/dbconnect.inc.php
-sed -i "4s/host\ =\ ''/host\ =\ 'localhost'/" /srv/zotero/dataserver/include/config/dbconnect.inc.php
-sed -i "6s/db\ =\ ''/db\ =\ 'zotero_master'/" /srv/zotero/dataserver/include/config/dbconnect.inc.php
-sed -i "18s/host\ =\ ''/host\ =\ 'localhost'/" /srv/zotero/dataserver/include/config/dbconnect.inc.php
-sed -i "25s/host\ =\ ''/host\ =\ 'localhost'/" /srv/zotero/dataserver/include/config/dbconnect.inc.php
+sed -i "s/pass\ =\ false/pass\ =\ '${zotero_password}'/g" /srv/zotero/dataserver/include/config/dbconnect.inc.php
+sed -i "8s/db\ =\ ''/db\ =\ 'zotero_master'/" /srv/zotero/dataserver/include/config/dbconnect.inc.php
+sed -i "15s/db\ =\ false/db\ =\ 'zotero_shards'/" /srv/zotero/dataserver/include/config/dbconnect.inc.php
+sed -i "22s/db\ =\ false/db\ =\ 'zotero_master'/" /srv/zotero/dataserver/include/config/dbconnect.inc.php
 sed -i "s/ids/zotero_ids/g" /srv/zotero/dataserver/include/config/dbconnect.inc.php
+sed -i "s/'www'/'zotero_www'/g" /srv/zotero/dataserver/include/config/dbconnect.inc.php
 
 echo "###################################"
 echo "General configuration of dataserver"
