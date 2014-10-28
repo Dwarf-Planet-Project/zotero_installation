@@ -152,6 +152,11 @@ cat ids.sql | $DB zotero_ids
 echo "Load in www schema"
 $DB zotero_www < $(cur_dir)www.sql
 
+echo "Setup roleIDs"
+echo "INSERT INTO LUM_ROLE VALUES ('Deleted', 1);" | $DB zotero_www
+echo "INSERT INTO LUM_ROLE VALUES ('Invalid', 2);" | $DB zotero_www
+echo "INSERT INTO LUM_ROLE VALUES ('Valid', 3);" | $DB zotero_www
+
 echo "#################################"
 echo "Configuration database connection"
 echo "#################################"
