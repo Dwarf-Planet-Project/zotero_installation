@@ -24,14 +24,16 @@ CREATE TABLE `sessions` (
 `id` int(10) unsigned NOT NULL,
 `modified` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
 `lifetime` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00', 
-KEY (`userID`),
-KEY (`id`)
+    PRIMARY KEY (`userID`, `id`),
+  FOREIGN KEY (`userID`) REFERENCES `users` (`userID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `users_email` (
 `userID` mediumint unsigned NOT NULL,
 `email` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-PRIMARY KEY (`userID`)
+  PRIMARY KEY (`userID`),
+  UNIQUE KEY (`email`), 
+  FOREIGN KEY (`userID`) REFERENCES `users` (`userID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `storage_institutions` (
@@ -44,31 +46,36 @@ PRIMARY KEY (`institutionID`)
 CREATE TABLE `storage_institution_email` (
 `email` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
 `institutionID` int(10) unsigned NOT NULL,
-PRIMARY KEY (`email`)
+  PRIMARY KEY (`institutionID`),
+  FOREIGN KEY (`institutionID`) REFERENCES `storage_institutions` (`institutionID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `users` (
 `userID` mediumint unsigned auto_increment NOT NULL,
 `username` varchar(40) NOT NULL,
 `password` char(40) NULL,
-UNIQUE KEY (`username`),
-UNIQUE KEY (`userID`)
+PRIMARY KEY (`username`, `userID`),
+  UNIQUE KEY `username` (`username`),
+  UNIQUE KEY `userID` (`userID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `users_meta` (
 `userID` mediumint unsigned NOT NULL,
 `metaKey` enum('profile_realname', 'publishLibrary', 'publishNotes') NOT NULL,
-`metaValue` varchar(255) NOT NULL
+`metaValue` varchar(255) NOT NULL,
+FOREIGN KEY (`userID`) REFERENCES `users` (`userID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `LUM_User` (
 `UserID` int(10) unsigned NOT NULL,
 `RoleID` int(10) unsigned NOT NULL,
-PRIMARY KEY (`UserID`)
+  PRIMARY KEY (`UserID`, `RoleID`),
+  FOREIGN KEY (`RoleID`) REFERENCES `LUM_Role` (`RoleID`),
+  FOREIGN KEY (`UserID`) REFERENCES `users` (`userID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `LUM_Role` (
 `RoleID` int(10) unsigned NOT NULL,
-`Name' enum('Deleted','Invalid','Valid') NOT NULL, 
+`Name` enum('Deleted','Invalid','Valid') NOT NULL, 
 PRIMARY KEY (`RoleID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
