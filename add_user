@@ -1,0 +1,50 @@
+#!/usr/bin/php
+<?
+set_include_path("../include");
+require("header.inc.php");
+
+if (empty($argv[1]) || empty($argv[2]) || empty($argv[3]) || empty($argv[4])) {
+	die("Usage: $argv[0] " . '$userID $email $username $real_user_name' . "\n");
+}
+
+$username = $argv[1];
+$email = $argv[2];
+$password = $argv[3];
+$real_user = $argv[4];
+
+echo "Adding new user $username\n";
+
+$passwordhash = password_hash($password);
+$libraryID = Zotero_Libraries::add('user', 1);
+
+
+Zotero_DB::beginTransaction();
+
+        $sql = "INSERT INTO zotero_www.users  (username, password) VALUES (?,?)";
+        Zotero_DB::query($sql, array( $username,$passwordhash));
+
+	$sql = "SELECT userID FROM zotero_www.users WHERE username=?";
+	$userID = Zotero_DB:valueQuery($sql, $username);
+
+	$sql = "INSERT INTO zotero_master.users  (userID, libraryID, username) VALUES (?,?)";
+	Zotero_DB::query($sql, array($userID, $libraryID, $username));
+	
+	$sql = "INSERT INTO zotero_master.storageAccounts (userID, quota, expiration) VALUES (?,?,?);";
+	Zotero_DB::query($sql,array($userID, '10000', '2020-12-31 00:00:00'));
+
+        $sql = "INSERT INTO zotero_www.user_email (userID, email) VALUES (?,?);";
+       Zotero_DB::query($sql,array($userID, $email));
+
+        $sql = "INSERT INTO zotero_www.LUM_User (RoleID, UserID) VALUES (3,?);";
+        Zotero_DB::query($sql,array($userID));
+
+        $sql = "INSERT INTO zotero_www.users_meta (userID, metaKey, metaValue) VALUES (?,'profile_realname',?);";
+        Zotero_DB::query($sql,array($userID,$real_user));
+
+Zotero_DB::commit();
+
+
+
+
+?>
+

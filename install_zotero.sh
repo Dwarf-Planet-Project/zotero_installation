@@ -16,7 +16,7 @@ echo "update package cache"
 apt-get update
 
 echo "dependencies for dataserver"
-apt-get install -y apache2 libapache2-mod-php5 mysql-server memcached zendframework php5-cli php5-memcache php5-mysql php5-curl 
+apt-get install -y apache2 libapache2-mod-php5 mysql-server memcached zendframework php5-cli php5-memcache php5-mysql php5-curl php5-memcached
 
 echo "general dependencies"
 apt-get install -y git gnutls-bin runit libapache2-modsecurity curl
@@ -39,6 +39,9 @@ echo "download source code of Elastica"
 git clone git://github.com/ruflin/Elastica.git /srv/zotero/dataserver/include/Elastica
 cd /srv/zotero/dataserver/include/Elastica
 git checkout fc607170ab2ca751097648d48a5d38e15e9d5f6a
+
+echo "install add_user script"
+cp add_user /srv/zotero/dataserver/admin
 
 echo "install composer"
 cd /srv/zotero/dataserver
