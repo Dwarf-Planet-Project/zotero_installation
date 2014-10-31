@@ -4,7 +4,7 @@ set_include_path("../include");
 require("header.inc.php");
 
 if (empty($argv[1]) || empty($argv[2]) || empty($argv[3]) || empty($argv[4])) {
-	die("Usage: $argv[0] " . '$userID $email $username $real_user_name' . "\n");
+	die("Usage: $argv[0] " . '$username $email $password $real_user_name' . "\n");
 }
 
 $username = $argv[1];
