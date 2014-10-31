@@ -15,7 +15,7 @@ $real_user = $argv[4];
 echo "Adding new user $username\n";
 
 $passwordhash = password_hash($password);
-$libraryID = Zotero_Libraries::add('user', 1);
+#$libraryID = Zotero_Libraries::add('user', 1);
 
 
 Zotero_DB::beginTransaction();
@@ -24,13 +24,13 @@ Zotero_DB::beginTransaction();
         Zotero_DB::query($sql, array( $username,$passwordhash));
 
 	$sql = "SELECT userID FROM zotero_www.users WHERE username=?";
-	$userID = Zotero_DB:valueQuery($sql, $username);
+	$userID = Zotero_DB::valueQuery($sql, $username);
 
-	$sql = "INSERT INTO zotero_master.users  (userID, libraryID, username) VALUES (?,?)";
-	Zotero_DB::query($sql, array($userID, $libraryID, $username));
+#	$sql = "INSERT INTO zotero_master.users  (userID, libraryID, username) VALUES (?,?)";
+#	Zotero_DB::query($sql, array($userID, $libraryID, $username));
 	
-	$sql = "INSERT INTO zotero_master.storageAccounts (userID, quota, expiration) VALUES (?,?,?);";
-	Zotero_DB::query($sql,array($userID, '10000', '2020-12-31 00:00:00'));
+#	$sql = "INSERT INTO zotero_master.storageAccounts (userID, quota, expiration) VALUES (?,?,?);";
+#	Zotero_DB::query($sql,array($userID, '10000', '2020-12-31 00:00:00'));
 
         $sql = "INSERT INTO zotero_www.user_email (userID, email) VALUES (?,?);";
        Zotero_DB::query($sql,array($userID, $email));
