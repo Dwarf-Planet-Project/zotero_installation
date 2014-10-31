@@ -13,7 +13,7 @@ echo "######################################################"
 echo "install required packages"
 
 echo "add debian wheezy repository"
-sed -i '$s,$,\ndeb http://http.debian.net/debian wheezy-backports main,'  /etc/apt/sources.list
+sed -i '$s,$,\ndeb http://ftp.acc.umu.se./debian wheezy-backports main,'  /etc/apt/sources.list
 
 echo "update package cache"
 apt-get update
