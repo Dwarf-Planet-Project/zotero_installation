@@ -51,9 +51,9 @@ CREATE TABLE `storage_institution_email` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `users` (
-`userID` mediumint unsigned auto_increment NOT NULL,
+`userID` mediumint unsigned auto_increment NULL,
 `username` varchar(40) NOT NULL,
-`password` char(40) NULL,
+`password` char(61) NOT NULL,
 PRIMARY KEY (`username`, `userID`),
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `userID` (`userID`)
@@ -62,9 +62,9 @@ PRIMARY KEY (`username`, `userID`),
 CREATE TABLE `users_meta` (
 `userID` mediumint unsigned NOT NULL,
 `metaKey` enum('profile_realname', 'publishLibrary', 'publishNotes') NOT NULL,
-`metaValue` varchar(255) NOT NULL,
+`metaValue` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
 FOREIGN KEY (`userID`) REFERENCES `users` (`userID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8  COLLATE=utf8_general_ci;
 
 CREATE TABLE `LUM_User` (
 `UserID` int(10) unsigned NOT NULL,
