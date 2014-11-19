@@ -12,18 +12,22 @@ echo "######################################################"
 
 echo "install required packages"
 
-echo "add debian wheezy repository"
+echo "add key for elasticsearch repository"
+wget -qO - http://packages.elasticsearch.org/GPG-KEY-elasticsearch | apt-key add -
+
+echo "add debian wheezy backports repository"
 sed -i '$s,$,\ndeb http://ftp.acc.umu.se./debian wheezy-backports main,'  /etc/apt/sources.list
+sed -i '$s,$,\nhttp://packages.elasticsearch.org/elasticsearch/1.3/debian stable main,'  /etc/apt/sources.list
 
 echo "update package cache"
 apt-get update
 
 echo "dependencies for dataserver"
-apt-get install -y apache2 libapache2-mod-php5 mysql-server memcached zendframework php5-cli php5-memcache php5-mysql php5-curl php5-memcached
+apt-get install -y apache2 libapache2-mod-php5 mysql-server memcached zendframework php5-cli php5-memcache php5-mysql php5-curl php5-memcached 
 apt-get -t wheezy-backports install -y php-aws-sdk php-doctrine-cache
 
 echo "general dependencies"
-apt-get install -y git gnutls-bin runit libapache2-modsecurity curl
+apt-get install -y git gnutls-bin runit libapache2-modsecurity curl elasticsearch openjdk-7-jre
 
 echo "created required directories"
 mkdir -p /srv/zotero/dataserver
@@ -36,6 +40,12 @@ mkdir -p /srv/zotero/log/error
 # save current directory
 cur_dir=$(pwd)
 
+echo "setting elasticsearch to be started during booting"
+update-rc.d elasticsearch defaults 95 10
+
+echo "starting elasticsearch"
+/etc/init.d/elasticsearch start
+
 echo "download source code of dataserver"
 git clone git://github.com/zotero/dataserver.git /srv/zotero/dataserver
 
@@ -46,6 +56,9 @@ git checkout fc607170ab2ca751097648d48a5d38e15e9d5f6a
 
 echo "install add_user script"
 cp add_user /srv/zotero/dataserver/admin
+
+echo "install change_password script"
+cp change_password /srv/zotero/dataserver/admin
 
 echo "patch master.sql"
 cp master.sql /srv/zotero/dataserver/misc
