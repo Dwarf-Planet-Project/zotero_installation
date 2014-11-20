@@ -16,7 +16,8 @@ echo "add key for elasticsearch repository"
 wget -qO - http://packages.elasticsearch.org/GPG-KEY-elasticsearch | apt-key add -
 
 echo "add debian wheezy backports repository"
-sed -i '$s,$,\ndeb http://ftp.acc.umu.se./debian wheezy-backports main,'  /etc/apt/sources.list
+# removed for the time being, potentially not required anymore
+# sed -i '$s,$,\ndeb http://ftp.acc.umu.se./debian wheezy-backports main,'  /etc/apt/sources.list
 sed -i '$s,$,\nhttp://packages.elasticsearch.org/elasticsearch/1.3/debian stable main,'  /etc/apt/sources.list
 
 echo "update package cache"
