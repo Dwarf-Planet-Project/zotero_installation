@@ -18,7 +18,7 @@ wget -qO - http://packages.elasticsearch.org/GPG-KEY-elasticsearch | apt-key add
 echo "add debian wheezy backports repository"
 # removed for the time being, potentially not required anymore
 # sed -i '$s,$,\ndeb http://ftp.acc.umu.se./debian wheezy-backports main,'  /etc/apt/sources.list
-sed -i '$s,$,\nhttp://packages.elasticsearch.org/elasticsearch/1.3/debian stable main,'  /etc/apt/sources.list
+sed -i '$s,$,\ndeb http://packages.elasticsearch.org/elasticsearch/1.4/debian stable main,'  /etc/apt/sources.list
 
 echo "update package cache"
 apt-get update
@@ -115,7 +115,7 @@ a2ensite zotero
 echo "change .htaccess"
 sed -i '3i RewriteCond %{REQUEST_URI} !^/zotero' /srv/zotero/dataserver/htdocs/.htaccess
 
-echo "restart apache2"
+echo "restart apache2"[5~
 service apache2 reload
 
 echo "###############"
@@ -126,7 +126,7 @@ character-set-server = utf8
 collation-server = utf8_general_ci
 event-scheduler = ON
 sql-mode = STRICT_ALL_TABLES
-default-time-zone = '+0:00'" > /etc/mysql/conf.d/zotero.cnf
+default-time-zone = '+0:00'OA" > /etc/mysql/conf.d/zotero.cnf
 /etc/init.d/mysql restart
 echo -n "root Password for MySQL: "
 read password
@@ -232,6 +232,7 @@ sed -i "s/AWS_SECRET_KEY\ =\ ''/AWS_SECRET_KEY\ =\ '${AWS_SECRET_KEY}'/" /srv/zo
 echo -n "s3_bucket: "
 read S3_BUCKET
 sed -i "s/S3_BUCKET\ =\ ''/S3_BUCKET\ =\ '${S3_BUCKET}'/" /srv/zotero/dataserver/include/config/config.inc.php
+sed -i "s/us-east-1/custom/" /srv/zotero/dataserver/include/config/config.inc.php
 echo -n "s3 endpoint url: "
 read S3_ENDPOINT
 sed -i "s/S3_ENDPOINT\ =\ 's3.amazonaws.com'/S3_ENDPOINT\ =\ '${S3_ENDPOINT}'/" /srv/zotero/dataserver/include/config/config.inc.php
@@ -253,7 +254,18 @@ sed -i "s/var\/www\/dataserver/srv\/zotero\/dataserver/" /srv/zotero/dataserver/
 echo "##############################################################"
 echo "patch header.inc.php for including host name for using own AWS"
 echo "##############################################################"
-sed -i "225a \$awsconfig['base_url']\ =\ ZCONFIG::\$AWS_HOST;" /srv/zotero/dataserver/include/header.inc.php
+sed -i "225a \$awsconfig['base_url']\ =\ \"http://\" . ZCONFIG::\$AWS_HOST;" /srv/zotero/dataserver/include/header.inc.php
+
+echo "###############################################################################"
+echo "patch Storage.inc.php for using custom host name for generating base Upload URL"
+echo "###############################################################################"
+sed -i "s,\".s3.amazonaws.com/\",\ \".\" . Z_CONFIG::$AWS_HOST" /srv/zotero/dataserver/model/Storage.inc.php
+
+echo "#####################################"
+echo "patch AWS-SDK to use custom S3 server"
+echo "#####################################"
+
+sed -i "s,{service}.{region}.amazonaws.com,s3.drossenhausen.de.vu" /srv/zotero/dataserver/vendor/
 
 echo "###############"
 echo "Configure runit"
