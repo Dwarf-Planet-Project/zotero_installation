@@ -65,13 +65,13 @@ echo "remove composer"
 rm composer.phar
 
 echo "install add_user script"
-cp add_user /srv/zotero/dataserver/admin
+cp /root/add_user /srv/zotero/dataserver/admin
 
 echo "install change_password script"
-cp change_password /srv/zotero/dataserver/admin
+cp /root/change_password /srv/zotero/dataserver/admin
 
 echo "patch master.sql"
-cp master.sql /srv/zotero/dataserver/misc
+cp /root/master.sql /srv/zotero/dataserver/misc
 
 echo "prepare directory rights"
 chown www-data:www-data /srv/zotero/dataserver/tmp
