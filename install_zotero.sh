@@ -65,13 +65,13 @@ echo "remove composer"
 rm composer.phar
 
 echo "install add_user script"
-cp /root/add_user /srv/zotero/dataserver/admin
+cp $cur_dir/add_user /srv/zotero/dataserver/admin
 
 echo "install change_password script"
-cp /root/change_password /srv/zotero/dataserver/admin
+cp $cur_dir/change_password /srv/zotero/dataserver/admin
 
 echo "patch master.sql"
-cp /root/master.sql /srv/zotero/dataserver/misc
+cp $cur_dir/master.sql /srv/zotero/dataserver/misc
 
 echo "prepare directory rights"
 chown www-data:www-data /srv/zotero/dataserver/tmp
@@ -81,34 +81,69 @@ cd /srv/zotero/dataserver/include
 rm -r Zend
 ln -s /usr/share/php/Zend/
 
-echo "generate SSL key and cert"
-certtool -p --sec-param high --outfile /etc/apache2/zotero.key
-certtool -s --load-privkey /etc/apache2/zotero.key --outfile /etc/apache2/zotero.cert
+read -p "Do you want to use SSL certificates for Zotero server? (y/n)" SSL
+if [[ $SSL = y ]] ; 
+  then
+    read -p "Do you want to generate SSL certificates now? (y/n)" gen_SSL
+    if [[ $gen_SSL = y ]];
+    then
+      echo "generate SSL key and cert"
+      certtool -p --sec-param high --outfile /etc/apache2/zotero.key
+      certtool -s --load-privkey /etc/apache2/zotero.key --outfile /etc/apache2/zotero.cert
+    else
+      cp $cur_dir/zotero.key /etc/apache2/zotero.key
+      cp $cur_dir/zotero.cert /etc/apache2/zotero.cert
+    fi
+fi
 
-echo "enable ssl support for apache2 server"
-a2enmod ssl
+read -p "Do you want to use SSL certificates for LibreS3? (y/n)" SSL_LibreS3
+if [[ $SSL_LibreS3 = y ]] ; 
+  then
+      cat $cur_dir/sx.cert >> /srv/zotero/dataserver/vendor/guzzle/guzzle/src/Guzzle/Http/Resources/cacert.pem
+fi
 
 echo "enable rewrite support for apache2 server"
 a2enmod rewrite
 
-echo "create available site for zotero"
-echo "<VirtualHost *:443>
-  DocumentRoot /srv/zotero/dataserver/htdocs
-  SSLEngine on
-  SSLCertificateFile /etc/apache2/zotero.cert
-  SSLCertificateKeyFile /etc/apache2/zotero.key
+if [[ $SSL = y ]] ;
+then 
+  echo "enable ssl support for apache2 server"
+  a2enmod ssl
 
-  <Directory "/srv/zotero/dataserver/htdocs/">
-    Options FollowSymLinks MultiViews
-    AllowOverride All
-    Order allow,deny
-    Allow from all
-  </Directory>
+  echo "create available site for zotero"
+  echo "<VirtualHost *:443>
+    DocumentRoot /srv/zotero/dataserver/htdocs
+    SSLEngine on
+    SSLCertificateFile /etc/apache2/zotero.cert
+    SSLCertificateKeyFile /etc/apache2/zotero.key
 
-  ErrorLog /srv/zotero/error.log
-  CustomLog /srv/zotero/access.log common
-</VirtualHost>" > /etc/apache2/sites-available/zotero
+    <Directory "/srv/zotero/dataserver/htdocs/">
+      Options FollowSymLinks MultiViews
+      AllowOverride All
+      Order allow,deny
+      Allow from all
+    </Directory>
 
+    ErrorLog /srv/zotero/error.log
+    CustomLog /srv/zotero/access.log common
+  </VirtualHost>" > /etc/apache2/sites-available/zotero
+else
+  echo "create available site for zotero"
+  echo "<VirtualHost *:80>
+    DocumentRoot /srv/zotero/dataserver/htdocs
+
+    <Directory "/srv/zotero/dataserver/htdocs/">
+      Options FollowSymLinks MultiViews
+      AllowOverride All
+      Order allow,deny
+      Allow from all
+    </Directory>
+
+    ErrorLog /srv/zotero/error.log
+    CustomLog /srv/zotero/access.log common
+  </VirtualHost>" > /etc/apache2/sites-available/zotero
+
+fi
 echo "activate site for zotero"
 a2ensite zotero
 
@@ -265,7 +300,7 @@ echo "#####################################"
 echo "patch AWS-SDK to use custom S3 server"
 echo "#####################################"
 
-sed -i "s,{service}.{region}.amazonaws.com,s3.drossenhausen.de.vu" /srv/zotero/dataserver/vendor/
+sed -i "s,{service}.{region}.amazonaws.com,s3.drossenhausen.de.vu" /srv/zotero/dataserver/vendor/aws/aws-sdk-php/src/Aws/Common/Resources/public-endpoints.php
 
 echo "###############"
 echo "Configure runit"
