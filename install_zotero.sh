@@ -65,13 +65,13 @@ echo "remove composer"
 rm composer.phar
 
 echo "install add_user script"
-cp $cur_dir/add_user /srv/zotero/dataserver/admin
+cp "$cur_dir/add_user" /srv/zotero/dataserver/admin
 
 echo "install change_password script"
-cp $cur_dir/change_password /srv/zotero/dataserver/admin
+cp "$cur_dir/change_password" /srv/zotero/dataserver/admin
 
 echo "patch master.sql"
-cp $cur_dir/master.sql /srv/zotero/dataserver/misc
+cp "$cur_dir/master.sql" /srv/zotero/dataserver/misc
 
 echo "prepare directory rights"
 chown www-data:www-data /srv/zotero/dataserver/tmp
@@ -91,15 +91,15 @@ if [[ $SSL = y ]] ;
       certtool -p --sec-param high --outfile /etc/apache2/zotero.key
       certtool -s --load-privkey /etc/apache2/zotero.key --outfile /etc/apache2/zotero.cert
     else
-      cp $cur_dir/zotero.key /etc/apache2/zotero.key
-      cp $cur_dir/zotero.cert /etc/apache2/zotero.cert
+      cp "$cur_dir/zotero.key" /etc/apache2/zotero.key
+      cp "$cur_dir/zotero.cert" /etc/apache2/zotero.cert
     fi
 fi
 
 read -p "Do you want to use SSL certificates for LibreS3? (y/n)" SSL_LibreS3
 if [[ $SSL_LibreS3 = y ]] ; 
   then
-      cat $cur_dir/sx.cert >> /srv/zotero/dataserver/vendor/guzzle/guzzle/src/Guzzle/Http/Resources/cacert.pem
+      cat "$cur_dir/sx.cert" >> /srv/zotero/dataserver/vendor/guzzle/guzzle/src/Guzzle/Http/Resources/cacert.pem
 fi
 
 echo "enable rewrite support for apache2 server"
