@@ -82,10 +82,10 @@ rm -r Zend
 ln -s /usr/share/php/Zend/
 
 read -p "Do you want to use SSL certificates for Zotero server? (y/n)" SSL
-if [[ $SSL=y ]] ; 
+if [ $SSL=y ] ; 
   then
     read -p "Do you want to generate SSL certificates now? (y/n)" gen_SSL
-    if [[ $gen_SSL=y ]];
+    if [ $gen_SSL=y ];
     then
       echo "generate SSL key and cert"
       certtool -p --sec-param high --outfile /etc/apache2/zotero.key
@@ -97,7 +97,7 @@ if [[ $SSL=y ]] ;
 fi
 
 read -p "Do you want to use SSL certificates for LibreS3? (y/n)" SSL_LibreS3
-if [[ $SSL_LibreS3=y ]] ; 
+if [ $SSL_LibreS3=y ] ; 
   then
       cat "$cur_dir/sx.cert" >> /srv/zotero/dataserver/vendor/guzzle/guzzle/src/Guzzle/Http/Resources/cacert.pem
 fi
@@ -105,7 +105,7 @@ fi
 echo "enable rewrite support for apache2 server"
 a2enmod rewrite
 
-if [[ $SSL=y ]] ;
+if [ $SSL=y ] ;
 then 
   echo "enable ssl support for apache2 server"
   a2enmod ssl
@@ -161,7 +161,7 @@ character-set-server = utf8
 collation-server = utf8_general_ci
 event-scheduler = ON
 sql-mode = STRICT_ALL_TABLES
-default-time-zone = '+0:00'OA" > /etc/mysql/conf.d/zotero.cnf
+default-time-zone = '+0:00'" > /etc/mysql/conf.d/zotero.cnf
 /etc/init.d/mysql restart
 echo -n "root Password for MySQL: "
 read password
