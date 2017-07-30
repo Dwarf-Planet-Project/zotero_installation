@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/local/bin/php
 <?
 set_include_path("../include");
 require("header.inc.php");
@@ -32,7 +32,7 @@ Zotero_DB::beginTransaction();
 #	$sql = "INSERT INTO zotero_master.storageAccounts (userID, quota, expiration) VALUES (?,?,?);";
 #	Zotero_DB::query($sql,array($userID, '10000', '2020-12-31 00:00:00'));
 
-        $sql = "INSERT INTO zotero_www.user_email (userID, email) VALUES (?,?);";
+        $sql = "INSERT INTO zotero_www.users_email (userID, email) VALUES (?,?);";
        Zotero_DB::query($sql,array($userID, $email));
 
         $sql = "INSERT INTO zotero_www.LUM_User (RoleID, UserID) VALUES (3,?);";
