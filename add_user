@@ -14,7 +14,7 @@ $real_user = $argv[4];
 
 echo "Adding new user $username\n";
 
-$passwordhash = password_hash($password);
+$passwordhash = md5($password);
 #$libraryID = Zotero_Libraries::add('user', 1);
 
 
